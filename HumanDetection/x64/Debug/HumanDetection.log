@@ -1,0 +1,5 @@
+﻿  main.cpp
+c:\users\zxu07\source\repos\humandetection\humandetection\main.cpp(77): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\zxu07\source\repos\humandetection\humandetection\main.cpp(79): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+c:\users\zxu07\source\repos\humandetection\humandetection\main.cpp(109): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+  HumanDetection.vcxproj -> C:\Users\zxu07\source\repos\HumanDetection\x64\Debug\HumanDetection.exe
