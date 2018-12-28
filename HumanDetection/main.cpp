@@ -8,10 +8,11 @@
 #include <windows.h>
 #include <vector>
 
+#include <sstream>
 using namespace std;
 
+//#define FILEPATH  "C:/Users/zxu07/Desktop/INRIADATA/normalized_images/"
 #define FILEPATH  "C:/Users/zxu07/Desktop/hog_pedestran_detect_c_plus_plus-master/hog_pedestran_detect_c_plus_plus-master/Pedestran_Detect/Pedestrians64x128/"
-
 void Train()
 {
 	////////////////////////////////读入训练样本图片路径和类别///////////////////////////////////////////////////
@@ -56,7 +57,7 @@ void Train()
 	for (vector<string>::size_type i = 0; i < imagePath.size(); i++)
 	{
 		cout << "Processing: " << imagePath[i] << endl;
-		cv::Mat src = cv::imread(imagePath[i], -1);
+		cv::Mat src = cv::imread(imagePath[i]);
 		if (src.empty())
 		{
 			cout << "can not load the image:" << imagePath[i] << endl;
@@ -160,8 +161,8 @@ void Detect()
 
 	//设置HOG
 	cv::HOGDescriptor hog;
-	hog.setSVMDetector(detector);
-	//hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+	//hog.setSVMDetector(detector);
+	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
 	cv::namedWindow("people detector", 1);
 
 	// 检测图片
@@ -189,11 +190,14 @@ void Detect()
 
 		fflush(stdout);
 		vector<cv::Rect> found, found_filtered;
+		vector<double> foundWeights;
 		// run the detector with default parameters. to get a higher hit-rate
 		// (and more false alarms, respectively), decrease the hitThreshold and
 		// groupThreshold (set groupThreshold to 0 to turn off the grouping completely).
 		//多尺度检测
-		hog.detectMultiScale(img, found, 0, cv::Size(8, 8), cv::Size(32, 32), 1.05, 2);
+		hog.detectMultiScale(img, found, foundWeights, 0, cv::Size(8, 8), cv::Size(32, 32), 1.05, 2);
+		cout << "foundWeights size: " << foundWeights.size() << endl;
+		cout << "found size: " << foundWeights.size() << endl;
 
 		size_t i, j;
 		//去掉空间中具有内外包含关系的区域，保留大的
@@ -218,6 +222,16 @@ void Detect()
 			r.y += cvRound(r.height*0.07);
 			r.height = cvRound(r.height*0.8);
 			rectangle(img, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
+
+			std::ostringstream strs;
+			strs << foundWeights[i];
+			std::string str = strs.str();
+
+			cv::Point org;
+			org.x = r.x;
+			org.y = r.y;
+			cv::putText(img, str, org, cv::FONT_HERSHEY_SIMPLEX,
+				0.5, CV_RGB(255, 0, 0));
 		}
 
 		imshow("people detector", img);
@@ -232,7 +246,7 @@ void Detect()
 
 int main()
 {
-	Train();
+	//Train();
 
 	Detect();
 
